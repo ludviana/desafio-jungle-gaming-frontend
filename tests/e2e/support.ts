@@ -1,5 +1,19 @@
 import { expect, type Page } from '@playwright/test';
 
+type MockScenario =
+  | 'default'
+  | 'slow'
+  | 'variable-latency'
+  | 'offline'
+  | 'server-error'
+  | 'empty'
+  | 'session-expired'
+  | 'register-conflict'
+  | 'price-change'
+  | 'payment-refused'
+  | 'pending-payment'
+  | 'timeout-after-order';
+
 export async function resetDemo(page: Page) {
   await page.goto('/');
   await expect(page.locator('.app-shell')).toBeVisible();
@@ -40,15 +54,12 @@ export async function openCheckout(page: Page) {
   await expect(page.getByRole('button', { name: 'Confirmar compra' })).toBeVisible();
 }
 
-export async function selectScenario(page: Page, scenario: string) {
-  await page.evaluate(async (value) => {
+export async function selectScenario(page: Page, scenario: MockScenario) {
+  await page.evaluate((value) => {
     localStorage.setItem('kurio_mock_scenario', value);
-    const response = await fetch('/api/mock/scenario', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scenario: value }),
-    });
-    if (!response.ok) throw new Error('Não foi possível selecionar o cenário mock.');
+    if (localStorage.getItem('kurio_mock_scenario') !== value) {
+      throw new Error(`Could not select mock scenario "${value}".`);
+    }
   }, scenario);
 }
 

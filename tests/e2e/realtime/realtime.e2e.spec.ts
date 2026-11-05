@@ -30,8 +30,8 @@ test.beforeEach(async ({ page }) => {
   page.on('websocket', (socket) => {
     if (!socket.url().includes('/socket.io/')) return;
     observations.connections += 1;
-    socket.on('framereceived', ({ payload }) => observations.receivedFrames.push(String(payload)));
-    socket.on('framesent', ({ payload }) => observations.sentFrames.push(String(payload)));
+    socket.on('framereceived', (payload) => observations.receivedFrames.push(String(payload)));
+    socket.on('framesent', (payload) => observations.sentFrames.push(String(payload)));
   });
   await resetDemo(page);
 });
