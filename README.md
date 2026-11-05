@@ -1,22 +1,22 @@
-# Kurio — marketplace de NFTs
+# Kurio — NFT Marketplace
 
-Aplicação frontend do desafio, com telas responsivas, API simulada por MSW e fluxos de catálogo, conta, carrinho e compra.
+The frontend application for the challenge, featuring responsive screens, an MSW-mocked API, and catalog, account, cart, and checkout flows.
 
-## Requisitos
+## Requirements
 
-- Node.js 20.19+ ou 22.12+
+- Node.js 20.19+ or 22.12+
 - npm
 
-## Executar localmente
+## Run locally
 
 ```powershell
 npm.cmd install
 npm.cmd run dev
 ```
 
-Abra a URL exibida pelo Vite (normalmente `http://localhost:5173`). Os mocks são ativados por padrão; não é necessário backend nem arquivo `.env`.
+Open the URL displayed by Vite (usually `http://localhost:5173`). Mocks are enabled by default; no backend or `.env` file is required.
 
-Comandos adicionais:
+Additional commands:
 
 ```powershell
 npm.cmd run build
@@ -28,68 +28,70 @@ npm.cmd run test:unit
 npm.cmd run test:e2e
 ```
 
-Na primeira execução E2E, instale Chromium com
-`npx.cmd playwright install chromium`. Playwright inicia o Vite com MSW; os testes
-reiniciam os dados simulados antes de cada cenário. Relatórios HTML, traces e
-capturas de falha são gravados em pastas ignoradas pelo Git.
+For the first E2E run, install Chromium with
+`npx.cmd playwright install chromium`. Playwright starts Vite with MSW, and tests
+reset mock data before each scenario. HTML reports, traces, and failure
+screenshots are saved in Git-ignored directories.
 
-Testes unitários cobrem aritmética ETH, mocks, handlers REST, adaptadores Axios,
-casos de uso e utilitários de apresentação. Os E2E estão separados por jornada
-em `tests/e2e/`; baselines cobrem início, detalhe, carrinho e pagamento em
-desktop e mobile.
+Unit tests cover ETH arithmetic, mocks, REST handlers, Axios adapters, use
+cases, and presentation utilities. E2E tests are organized by user journey in
+`tests/e2e/`; visual baselines cover the home page, NFT details, cart, and
+checkout on desktop and mobile. Realtime scenarios cover price and
+availability changes, checkout quote updates, duplicate and stale events, and
+the resumption of a pending order after disconnection.
 
-## Arquitetura e estilos
+## Architecture and styles
 
-- `src/domain/`: entidades, contratos de domínio e regras puras, como aritmética ETH.
-- `src/application/`: portas dos repositórios e casos de uso independentes de transporte.
-- `src/infrastructure/`: adaptador Axios, mocks MSW/Socket.IO e persistência de demonstração.
-- `src/app/`: composição das dependências e rotas.
-- `src/presentation/features/`: páginas e componentes organizados por fluxo/tela.
-- Cada funcionalidade de apresentação mantém seus estilos CSS em uma pasta
-  `presentation-*-styles` ao lado das páginas e componentes. Os estilos globais
-  ficam em `src/presentation/presentation-global-styles/`.
-- `components.json` registra os aliases shadcn/ui para os componentes de UI
-  adaptados ao tema. O projeto usa primitives Radix, CVA e Tailwind Merge.
-- Testes unitários ficam próximos do código testado, em pastas `*-tests`
-  específicas da camada ou funcionalidade. `tests/e2e/` separa os fluxos por
-  jornada (`account/`, `authentication/`, `cart/`, `catalog/`, `checkout/`,
-  `favorites/` e `realtime/`); `visual/` contém os cenários visuais e
-  `visual-baselines/` suas referências desktop/mobile.
-- Componentes de apresentação importam folhas da pasta de estilos da própria
-  funcionalidade. Tailwind continua disponível para utilitários e componentes.
-- `scripts/check-line-length.mjs`: faz o `lint` falhar se uma linha de código ultrapassar
-  100 caracteres. `npm.cmd run format` aplica Prettier; `npm.cmd run format:check`
-  confere a formatação sem alterar arquivos.
+- `src/domain/`: entities, domain contracts, and pure rules such as ETH arithmetic.
+- `src/application/`: repository ports and transport-independent use cases.
+- `src/infrastructure/`: Axios adapter, MSW/Socket.IO mocks, and demo persistence.
+- `src/app/`: dependency composition and routes.
+- `src/presentation/features/`: pages and components organized by flow and screen.
+- Each presentation feature keeps its CSS styles in a `presentation-*-styles`
+  folder alongside its pages and components. Global styles are in
+  `src/presentation/presentation-global-styles/`.
+- `components.json` records the shadcn/ui aliases for UI components adapted to
+  the theme. The project uses Radix primitives, CVA, and Tailwind Merge.
+- Unit tests are kept close to the code they test, in `*-tests` folders specific
+  to each layer or feature. `tests/e2e/` separates flows by journey
+  (`account/`, `authentication/`, `cart/`, `catalog/`, `checkout/`, `favorites/`,
+  and `realtime/`); `visual/` contains visual scenarios and
+  `visual-baselines/` contains their desktop and mobile references.
+- Presentation components import stylesheets from their own feature's styles
+  folder. Tailwind remains available for utility classes and components.
+- `scripts/check-line-length.mjs` makes `lint` fail if a code line exceeds 100
+  characters. `npm.cmd run format` applies Prettier; `npm.cmd run format:check`
+  checks formatting without changing files.
 
-Fluxo de dependência: apresentação → casos de uso/portas → domínio. Os adaptadores de
-infraestrutura implementam as portas e são conectados no composition root em
-`src/app/container.ts`; o domínio não importa React, Axios ou MSW.
+Dependency flow: presentation → use cases/ports → domain. Infrastructure
+adapters implement the ports and are connected in the composition root at
+`src/app/container.ts`; the domain does not import React, Axios, or MSW.
 
-## Credenciais de demonstração
+## Demo credentials
 
 - `lucas@kurio.test` / `Kurio123!`
 - `aether@kurio.test` / `Kurio123!`
 
-## Integração contínua
+## Continuous integration
 
-O workflow `.github/workflows/ci.yml` executa lint, formatação, typecheck,
-testes unitários, build e jornadas E2E em pushes e pull requests. Os testes
-Playwright e unitários também podem ser executados localmente pelos comandos
-acima. Instale o Chromium na primeira execução E2E com
-`npx.cmd playwright install chromium`.
+The `.github/workflows/ci.yml` workflow runs lint, formatting, type checking,
+unit tests, build, and E2E journeys on pushes and pull requests. Playwright and
+unit tests can also be run locally using the commands above. Install Chromium
+for the first E2E run with `npx.cmd playwright install chromium`.
 
-## Auditoria Lighthouse
+## Lighthouse audit
 
-Após instalar Chromium e dependências, execute:
+After installing Chromium and dependencies, run:
 
 ```powershell
 npm.cmd run audit:lighthouse
 ```
 
-O comando gera um build de produção, inicia o preview local e coleta três
-medições mobile e desktop para início e detalhe do NFT. Os relatórios HTML/JSON
-e as medianas (incluindo LCP, CLS e TBT) são gravados em `lighthouse-reports/`.
-As medições ainda precisam ser executadas e revisadas antes da entrega.
+The command creates a production build, starts the local preview, and collects
+three mobile and desktop measurements for the home page and NFT details. HTML
+and JSON reports, along with medians (including LCP, CLS, and TBT), are saved in
+`lighthouse-reports/`. The measurements still need to be run and reviewed
+before delivery.
 
-Consulte [ARCHITECTURE.md](./ARCHITECTURE.md) para contratos REST, sessão,
-cache, Socket.IO e decisões/limitações da simulação.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for REST contracts, session handling,
+cache, Socket.IO, and simulation decisions and limitations.

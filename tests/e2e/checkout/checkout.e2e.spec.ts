@@ -57,13 +57,16 @@ test('pending order resolves automatically', async ({ page }) => {
 });
 
 test('repeated checkout submission creates only one order', async ({ page }) => {
-  let orderRequests = 0;
+  const orderRequests: string[] = [];
   page.on('request', (request) => {
-    if (request.method() === 'POST' && request.url().endsWith('/api/orders')) orderRequests += 1;
+    if (request.method() === 'POST' && request.url().endsWith('/api/orders')) {
+      orderRequests.push(request.headers()['x-idempotency-key'] ?? '');
+    }
   });
   await addNFTToCart(page);
   await openCheckout(page);
   await page.getByRole('button', { name: 'Confirmar compra' }).dblclick();
   await expect(page.getByRole('heading', { name: /Seus NFTs agora/ })).toBeVisible();
-  expect(orderRequests).toBe(1);
+  expect(orderRequests).toHaveLength(1);
+  expect(orderRequests[0]).not.toBe('');
 });

@@ -33,8 +33,8 @@ async function waitForPreview() {
     try {
       const response = await fetch(baseURL);
       if (response.ok) return;
-    } catch {
-      // The preview server is not ready yet.
+    } catch (error) {
+      if (!(error instanceof TypeError)) throw error;
     }
     await delay(250);
   }

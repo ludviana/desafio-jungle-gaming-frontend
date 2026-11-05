@@ -46,14 +46,13 @@ test('login dialog supports keyboard focus and Escape dismissal', async ({ page 
 test('expired session returns to login and resumes the protected route', async ({ page }) => {
   await login(page);
   await page.goto('/profile');
-  await page.evaluate(() => localStorage.setItem('kurio_mock_scenario', 'session-expired'));
-  await Promise.all([
-    page.waitForURL(/\/login$/),
-    page.getByRole('contentinfo').getByRole('link', { name: 'Carteiras' }).click({
-      noWaitAfter: true,
-    }),
-  ]);
-  await page.evaluate(() => localStorage.removeItem('kurio_mock_scenario'));
+  await selectScenario(page, 'session-expired');
+  const walletsResponse = page.waitForResponse(
+    (response) => response.url().endsWith('/api/wallets') && response.status() === 401,
+  );
+  await page.getByRole('complementary').getByRole('link', { name: 'Carteiras' }).click();
+  await walletsResponse;
+  await expect(page).toHaveURL(/\/login$/);
   await login(page);
   await expect(page).toHaveURL(/\/wallets$/);
   await expect(page.getByRole('heading', { name: 'Carteira principal' })).toBeVisible();

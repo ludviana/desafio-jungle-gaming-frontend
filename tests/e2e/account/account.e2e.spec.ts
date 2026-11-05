@@ -34,7 +34,7 @@ test('avatar and password changes validate and persist', async ({ page }) => {
   await expect(page.getByLabel('Avatar')).toHaveValue('https://example.test/avatar.png');
 
   await page.getByLabel('Senha atual').fill('wrong-password');
-  await page.getByLabel('Nova senha').fill('NewKurio123!');
+  await page.getByLabel('Nova senha', { exact: true }).fill('NewKurio123!');
   await page.getByLabel('Confirmar nova senha').fill('NewKurio123!');
   await page.getByRole('button', { name: 'Alterar senha' }).click();
   await expect(page.getByRole('alert')).toContainText('Senha atual incorreta');
@@ -47,4 +47,25 @@ test('avatar and password changes validate and persist', async ({ page }) => {
   await page.getByLabel('Senha', { exact: true }).fill('NewKurio123!');
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await page.waitForURL((url) => url.pathname !== '/login');
+});
+
+test('profile and wallet forms reject invalid required fields', async ({ page }) => {
+  await login(page);
+  await page.goto('/profile');
+  const profileForm = page.locator('.profile-form');
+  await profileForm.getByLabel('E-mail *').fill('not-an-email');
+  await profileForm.getByRole('button', { name: 'Salvar perfil' }).click();
+  expect(
+    await profileForm.getByLabel('E-mail *').evaluate((input) => input.matches(':invalid')),
+  ).toBe(true);
+
+  await page.goto('/wallets');
+  const walletForm = page.locator('#wallet-form');
+  await walletForm.getByLabel('Endereço da carteira *').fill('');
+  await walletForm.getByRole('button', { name: 'Salvar carteira' }).click();
+  expect(
+    await walletForm
+      .getByLabel('Endereço da carteira *')
+      .evaluate((input) => input.matches(':invalid')),
+  ).toBe(true);
 });

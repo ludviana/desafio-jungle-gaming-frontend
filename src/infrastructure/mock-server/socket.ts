@@ -17,6 +17,7 @@ interface MockSocketClient {
   channel: ReturnType<typeof toSocketIo>;
   nfts: Set<string>;
   orders: Set<string>;
+  close: () => void;
 }
 
 const clients = new Set<MockSocketClient>();
@@ -30,7 +31,7 @@ function emitNftUpdate(client: MockSocketClient, nft: NFT): void {
     availableQuantity: nft.availableQuantity,
     version: nft.version,
   };
-  client.channel.server.emit('nft.updated', update);
+  client.channel.client.emit('nft.updated', update);
 }
 
 function emitOrderUpdate(client: MockSocketClient, receipt: OrderReceipt): void {
@@ -40,7 +41,7 @@ function emitOrderUpdate(client: MockSocketClient, receipt: OrderReceipt): void 
     status: receipt.status === 'failed' ? 'failed' : 'confirmed',
     version: receipt.status === 'pending' ? 1 : 2,
   };
-  client.channel.server.emit('order.updated', update);
+  client.channel.client.emit('order.updated', update);
 }
 
 function publishNftUpdate(nft: NFT): void {
@@ -78,6 +79,10 @@ export function publishMockOrderUpdate(receipt: OrderReceipt): void {
   publishOrderUpdate(receipt);
 }
 
+export function disconnectMockSockets(): void {
+  for (const client of clients) client.close();
+}
+
 export function resetRealtimeMock(): void {
   for (const timer of pendingOrderTimers.values()) clearTimeout(timer);
   pendingOrderTimers.clear();
@@ -90,6 +95,7 @@ export const socketHandlers = [
       channel,
       nfts: new Set(),
       orders: new Set(),
+      close: () => connection.client.close(),
     };
     clients.add(client);
 

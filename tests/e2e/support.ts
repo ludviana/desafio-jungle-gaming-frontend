@@ -51,3 +51,10 @@ export async function selectScenario(page: Page, scenario: string) {
     if (!response.ok) throw new Error('Não foi possível selecionar o cenário mock.');
   }, scenario);
 }
+
+export async function postMockEvent(page: Page, endpoint: string): Promise<boolean> {
+  return page.evaluate(async (path) => {
+    const response = await fetch(path, { method: 'POST' });
+    return response.ok;
+  }, endpoint);
+}

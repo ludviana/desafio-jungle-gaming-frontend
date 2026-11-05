@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useMarketplace } from '../../shared/useMarketplace';
@@ -19,6 +19,7 @@ export function PaymentPage() {
   const marketplace = useMarketplace();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const orderSubmissionStarted = useRef(false);
   const sessionQuery = useSession();
   const cartQuery = useCart();
   const walletsQuery = useQuery({
@@ -69,6 +70,9 @@ export function PaymentPage() {
       await queryClient.invalidateQueries();
       void navigate({ to: '/orders/$orderId', params: { orderId: receipt.orderId } });
     },
+    onError: () => {
+      orderSubmissionStarted.current = false;
+    },
   });
 
   if (!getToken())
@@ -91,7 +95,9 @@ export function PaymentPage() {
         className="payment-layout"
         onSubmit={(event) => {
           event.preventDefault();
-          if (event.currentTarget.reportValidity()) orderMutation.mutate();
+          if (!event.currentTarget.reportValidity() || orderSubmissionStarted.current) return;
+          orderSubmissionStarted.current = true;
+          orderMutation.mutate();
         }}
       >
         <section>

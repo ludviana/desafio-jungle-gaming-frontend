@@ -107,7 +107,10 @@ for an unavailable connection.
 Mock events are deterministic: the explicit `/api/mock/events/nft/:nftId`
 scenario endpoint and the stale-price checkout scenario publish NFT changes;
 pending-order confirmation publishes `order.updated` and inventory updates.
-There is no background timer that randomly mutates catalog prices.
+Dedicated mock-only endpoints replay duplicate/stale NFT events, set inventory
+to zero, and disconnect active sockets for E2E coverage. Event frames are sent
+through the browser-facing side of the MSW Socket.IO binding. There is no
+background timer that randomly mutates catalog prices.
 
 ## UI, accessibility, and visual decisions
 
@@ -136,11 +139,14 @@ realtime change in the MSW-backed demo.
 ## Verification state and limitations
 
 The GitHub Actions workflow runs formatting, lint, test type-check, unit tests,
-build, and Playwright E2E. Those suites must be executed after the latest file
-moves and realtime changes; this implementation task intentionally does not run
-them. The Socket.IO path and event direction have been corrected in code, but
-the browser handshake and scenarios are not considered verified until the E2E
-workflow passes.
+build, and Playwright E2E. The latest workflow passed formatting, lint,
+type-check, unit tests, and build, but failed in E2E. Its findings included an
+ambiguous password locator, a serialized `Response` assertion, mock Socket.IO
+events sent on the wrong side of the binding, and a duplicate-submit race.
+These have been corrected and coverage added for event replay, inventory
+updates, checkout quote refresh, and socket reconnection. The E2E suite was not
+run locally; the updated workflow must pass before these flows are considered
+verified.
 
 The Lighthouse runner is configured by `lighthouse.config.json`. After installing
 dependencies, run `npm run audit:lighthouse`; it builds the app, serves the

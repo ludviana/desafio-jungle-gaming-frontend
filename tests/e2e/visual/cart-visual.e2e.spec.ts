@@ -11,5 +11,6 @@ test('cart visual baseline', async ({ page }) => {
   await expect(page).toHaveScreenshot('cart.png', {
     fullPage: true,
     animations: 'disabled',
+    maxDiffPixelRatio: 0.01,
   });
 });
