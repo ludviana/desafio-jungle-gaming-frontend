@@ -20,8 +20,15 @@ interface MockSocketClient {
   close: () => void;
 }
 
+interface MockSocketEvent {
+  event: 'nft.updated' | 'order.updated';
+  resourceId: string;
+}
+
 const clients = new Set<MockSocketClient>();
 const pendingOrderTimers = new Map<string, ReturnType<typeof setTimeout>>();
+const publishedEvents: MockSocketEvent[] = [];
+let connectionCount = 0;
 
 function emitNftUpdate(client: MockSocketClient, nft: NFT): void {
   const update: RealtimeNFTUpdate = {
@@ -32,6 +39,7 @@ function emitNftUpdate(client: MockSocketClient, nft: NFT): void {
     version: nft.version,
   };
   client.channel.client.emit('nft.updated', update);
+  publishedEvents.push({ event: 'nft.updated', resourceId: nft.id });
 }
 
 function emitOrderUpdate(client: MockSocketClient, receipt: OrderReceipt): void {
@@ -42,6 +50,7 @@ function emitOrderUpdate(client: MockSocketClient, receipt: OrderReceipt): void 
     version: receipt.status === 'pending' ? 1 : 2,
   };
   client.channel.client.emit('order.updated', update);
+  publishedEvents.push({ event: 'order.updated', resourceId: receipt.orderId });
 }
 
 function publishNftUpdate(nft: NFT): void {
@@ -83,13 +92,31 @@ export function disconnectMockSockets(): void {
   for (const client of clients) client.close();
 }
 
+export function getMockSocketObservations() {
+  return {
+    connections: connectionCount,
+    nftSubscriptions: Array.from(
+      new Set(Array.from(clients).flatMap((client) => [...client.nfts])),
+    ),
+    orderSubscriptions: Array.from(
+      new Set(Array.from(clients).flatMap((client) => [...client.orders])),
+    ),
+    publishedEvents: [...publishedEvents],
+  };
+}
+
 export function resetRealtimeMock(): void {
   for (const timer of pendingOrderTimers.values()) clearTimeout(timer);
   pendingOrderTimers.clear();
+  for (const client of clients) client.close();
+  clients.clear();
+  connectionCount = 0;
+  publishedEvents.length = 0;
 }
 
 export const socketHandlers = [
   socket.addEventListener('connection', (connection) => {
+    connectionCount += 1;
     const channel = toSocketIo(connection);
     const client: MockSocketClient = {
       channel,

@@ -14,6 +14,13 @@ type MockScenario =
   | 'pending-payment'
   | 'timeout-after-order';
 
+interface MockSocketObservations {
+  connections: number;
+  nftSubscriptions: string[];
+  orderSubscriptions: string[];
+  publishedEvents: Array<{ event: string; resourceId: string }>;
+}
+
 export async function resetDemo(page: Page) {
   await page.goto('/');
   await expect(page.locator('.app-shell')).toBeVisible();
@@ -68,4 +75,12 @@ export async function postMockEvent(page: Page, endpoint: string): Promise<boole
     const response = await fetch(path, { method: 'POST' });
     return response.ok;
   }, endpoint);
+}
+
+export async function getMockSocketObservations(page: Page): Promise<MockSocketObservations> {
+  return page.evaluate(async () => {
+    const response = await fetch('/api/mock/socket/observations');
+    if (!response.ok) throw new Error('Could not read mock Socket.IO observations.');
+    return (await response.json()) as MockSocketObservations;
+  });
 }

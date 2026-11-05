@@ -1,9 +1,15 @@
 import { http, HttpResponse } from 'msw';
 import { db } from '../db';
 import { failure, formatEth, parseEth } from '../helpers';
-import { disconnectMockSockets, publishMockNftUpdate, resetRealtimeMock } from '../socket';
+import {
+  disconnectMockSockets,
+  getMockSocketObservations,
+  publishMockNftUpdate,
+  resetRealtimeMock,
+} from '../socket';
 
 export const scenarioHandlers = [
+  http.get('/api/mock/socket/observations', () => HttpResponse.json(getMockSocketObservations())),
   http.get('/api/mock/scenario', () => HttpResponse.json({ scenario: 'default' })),
   http.put('/api/mock/scenario', async ({ request }) => {
     const body = (await request.json()) as { scenario: string };

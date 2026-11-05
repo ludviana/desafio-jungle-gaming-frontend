@@ -1,38 +1,26 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { addNFTToCart, openCheckout, postMockEvent, resetDemo, selectScenario } from '../support';
+import {
+  addNFTToCart,
+  getMockSocketObservations,
+  openCheckout,
+  postMockEvent,
+  resetDemo,
+  selectScenario,
+} from '../support';
 
-interface SocketObservations {
-  connections: number;
-  receivedFrames: string[];
-  sentFrames: string[];
-}
-
-const socketsByPage = new WeakMap<Page, SocketObservations>();
-
-async function expectSubscription(page: Page, event: string, id?: string): Promise<void> {
+async function expectSubscription(page: Page, event: string, id?: string) {
   await expect
-    .poll(() =>
-      (socketsByPage.get(page)?.sentFrames ?? []).some(
-        (frame) => frame.includes(event) && (!id || frame.includes(id)),
-      ),
-    )
+    .poll(async () => {
+      const observations = await getMockSocketObservations(page);
+      const subscriptions =
+        event === 'subscribe:nft' ? observations.nftSubscriptions : observations.orderSubscriptions;
+      return id ? subscriptions.includes(id) : subscriptions.length > 0;
+    })
     .toBe(true);
 }
 
 test.beforeEach(async ({ page }) => {
-  const observations: SocketObservations = {
-    connections: 0,
-    receivedFrames: [],
-    sentFrames: [],
-  };
-  socketsByPage.set(page, observations);
-  page.on('websocket', (socket) => {
-    if (!socket.url().includes('/socket.io/')) return;
-    observations.connections += 1;
-    socket.on('framereceived', ({ payload }) => observations.receivedFrames.push(String(payload)));
-    socket.on('framesent', ({ payload }) => observations.sentFrames.push(String(payload)));
-  });
   await resetDemo(page);
 });
 
@@ -44,9 +32,9 @@ test('NFT changes arrive through Socket.IO and update the detail cache', async (
   expect(await postMockEvent(page, '/api/mock/events/nft/emerald-ape-042')).toBe(true);
   await expect(price).toHaveText('1.20 ETH');
   await expect
-    .poll(() =>
-      (socketsByPage.get(page)?.receivedFrames ?? []).some((frame) =>
-        frame.includes('nft.updated'),
+    .poll(async () =>
+      (await getMockSocketObservations(page)).publishedEvents.some(
+        (event) => event.event === 'nft.updated' && event.resourceId === 'emerald-ape-042',
       ),
     )
     .toBe(true);
@@ -63,9 +51,9 @@ test('checkout quote refreshes after a price update received through Socket.IO',
   expect(await postMockEvent(page, '/api/mock/events/nft/emerald-ape-042')).toBe(true);
   await expect(total).toHaveText('1.216 ETH');
   await expect
-    .poll(() =>
-      (socketsByPage.get(page)?.receivedFrames ?? []).some((frame) =>
-        frame.includes('nft.updated'),
+    .poll(async () =>
+      (await getMockSocketObservations(page)).publishedEvents.some(
+        (event) => event.event === 'nft.updated' && event.resourceId === 'emerald-ape-042',
       ),
     )
     .toBe(true);
@@ -89,9 +77,9 @@ test('duplicate and stale NFT events do not revert the latest price', async ({ p
   await expect(price).toHaveText('1.20 ETH');
   await expect
     .poll(
-      () =>
-        (socketsByPage.get(page)?.receivedFrames ?? []).filter((frame) =>
-          frame.includes('nft.updated'),
+      async () =>
+        (await getMockSocketObservations(page)).publishedEvents.filter(
+          (event) => event.event === 'nft.updated' && event.resourceId === 'emerald-ape-042',
         ).length,
     )
     .toBeGreaterThanOrEqual(3);
@@ -106,9 +94,9 @@ test('pending orders resolve from an order.updated Socket.IO event', async ({ pa
   await expect(page.getByRole('heading', { name: 'Pagamento pendente' })).toBeVisible();
   await expectSubscription(page, 'subscribe:order');
   await expect
-    .poll(() =>
-      (socketsByPage.get(page)?.receivedFrames ?? []).some((frame) =>
-        frame.includes('order.updated'),
+    .poll(async () =>
+      (await getMockSocketObservations(page)).publishedEvents.some(
+        (event) => event.event === 'order.updated',
       ),
     )
     .toBe(true);
@@ -123,18 +111,20 @@ test('a pending order resumes over Socket.IO after a connection loss', async ({ 
   await expect(page.getByRole('heading', { name: 'Pagamento pendente' })).toBeVisible();
   await expectSubscription(page, 'subscribe:order');
 
-  const observations = socketsByPage.get(page);
-  if (!observations) throw new Error('Socket observations were not initialized.');
-  const initialConnections = observations.connections;
+  const initialConnections = (await getMockSocketObservations(page)).connections;
   expect(await postMockEvent(page, '/api/mock/events/socket/disconnect')).toBe(true);
 
   await expect
-    .poll(() => observations.connections, { timeout: 10_000 })
+    .poll(async () => (await getMockSocketObservations(page)).connections, { timeout: 10_000 })
     .toBeGreaterThan(initialConnections);
   await expect
-    .poll(() => observations.receivedFrames.some((frame) => frame.includes('order.updated')), {
-      timeout: 10_000,
-    })
+    .poll(
+      async () =>
+        (await getMockSocketObservations(page)).publishedEvents.some(
+          (event) => event.event === 'order.updated',
+        ),
+      { timeout: 10_000 },
+    )
     .toBe(true);
   await expect(page.getByRole('heading', { name: /Seus NFTs agora/ })).toBeVisible({
     timeout: 10_000,
