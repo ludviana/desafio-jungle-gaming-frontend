@@ -23,6 +23,7 @@ export function ProfilePage() {
       setMessage('Perfil atualizado.');
     },
   });
+
   const passwordMutation = useMutation({
     mutationFn: () =>
       marketplace.profile.changePassword(passwords.currentPassword, passwords.newPassword),
