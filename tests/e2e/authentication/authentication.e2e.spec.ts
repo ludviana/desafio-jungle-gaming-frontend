@@ -47,10 +47,14 @@ test('expired session returns to login and resumes the protected route', async (
   await login(page);
   await page.goto('/profile');
   await selectScenario(page, 'session-expired');
-  const walletsResponse = page.waitForResponse(
-    (response) => response.url().endsWith('/api/wallets') && response.status() === 401,
-  );
-  await page.getByRole('complementary').getByRole('link', { name: 'Carteiras' }).click();
+  const walletsResponse = page.waitForResponse((response) => {
+    const url = new URL(response.url());
+    return url.pathname === '/api/wallets' && response.status() === 401;
+  });
+  await page
+    .getByRole('complementary')
+    .getByRole('link', { name: 'Carteiras' })
+    .evaluate((link) => (link as HTMLAnchorElement).click());
   await walletsResponse;
   await expect(page).toHaveURL(/\/login$/);
   await login(page);
