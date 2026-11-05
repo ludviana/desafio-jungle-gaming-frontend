@@ -29,9 +29,23 @@ test('timed-out order retry recovers the same receipt', async ({ page }) => {
   await addNFTToCart(page);
   await openCheckout(page);
   await selectScenario(page, 'timeout-after-order');
+
+  const firstOrderRequestPromise = page.waitForRequest(
+    (request) => request.method() === 'POST' && request.url().endsWith('/api/orders'),
+  );
   await page.getByRole('button', { name: 'Confirmar compra' }).click();
+  const firstOrderRequest = await firstOrderRequestPromise;
+  expect(firstOrderRequest.headers()['x-mock-scenario']).toBe('timeout-after-order');
+  const idempotencyKey = firstOrderRequest.headers()['x-idempotency-key'];
+  expect(idempotencyKey).toBeTruthy();
   await expect(page.getByRole('alert')).toContainText('mesma tentativa');
+
+  const retryOrderRequestPromise = page.waitForRequest(
+    (request) => request.method() === 'POST' && request.url().endsWith('/api/orders'),
+  );
   await page.getByRole('button', { name: 'Confirmar compra' }).click();
+  const retryOrderRequest = await retryOrderRequestPromise;
+  expect(retryOrderRequest.headers()['x-idempotency-key']).toBe(idempotencyKey);
   await expect(page.getByRole('heading', { name: /Seus NFTs agora/ })).toBeVisible();
 });
 

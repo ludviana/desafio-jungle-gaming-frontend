@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useMarketplace } from '../../shared/useMarketplace';
 import { multiplyEth } from '../../../domain/value-objects/eth';
+import type { CartItem, CartQuote, CreateOrderPayload } from '../../../domain/entities';
 import { PriceSummary } from '../cart/CartPage';
 import {
   getToken,
@@ -20,6 +21,12 @@ export function PaymentPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const orderSubmissionStarted = useRef(false);
+  const pendingOrderAttempt = useRef<{
+    payload: CreateOrderPayload;
+    key: string;
+    cart: CartItem[];
+    quote: CartQuote;
+  } | null>(null);
   const sessionQuery = useSession();
   const cartQuery = useCart();
   const walletsQuery = useQuery({
@@ -47,23 +54,28 @@ export function PaymentPage() {
     walletsQuery.data?.find((wallet) => wallet.isPrimary);
   const orderMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedWallet || !quoteQuery.data || cart.length === 0)
-        throw new Error('Selecione uma carteira e confira o carrinho.');
-      const payload = {
-        items: cart.map((item) => ({ nftId: item.nft.id, quantity: item.quantity })),
-        walletAddress: selectedWallet.address,
-        network,
-        couponCode: quoteQuery.data.appliedCoupon,
-        quoteVersion: quoteQuery.data.quoteVersion,
-      };
-      const signature = JSON.stringify(payload);
-      let key = sessionStorage.getItem('kurio_pending_order_key');
-      if (sessionStorage.getItem('kurio_pending_order_payload') !== signature || !key) {
-        key = crypto.randomUUID();
-        sessionStorage.setItem('kurio_pending_order_key', key);
-        sessionStorage.setItem('kurio_pending_order_payload', signature);
+      let attempt = pendingOrderAttempt.current;
+      if (!attempt) {
+        if (!selectedWallet || !quoteQuery.data || cart.length === 0)
+          throw new Error('Selecione uma carteira e confira o carrinho.');
+        const payload: CreateOrderPayload = {
+          items: cart.map((item) => ({ nftId: item.nft.id, quantity: item.quantity })),
+          walletAddress: selectedWallet.address,
+          network,
+          couponCode: quoteQuery.data.appliedCoupon,
+          quoteVersion: quoteQuery.data.quoteVersion,
+        };
+        const signature = JSON.stringify(payload);
+        let key = sessionStorage.getItem('kurio_pending_order_key');
+        if (sessionStorage.getItem('kurio_pending_order_payload') !== signature || !key) {
+          key = crypto.randomUUID();
+          sessionStorage.setItem('kurio_pending_order_key', key);
+          sessionStorage.setItem('kurio_pending_order_payload', signature);
+        }
+        attempt = { payload, key, cart, quote: quoteQuery.data };
+        pendingOrderAttempt.current = attempt;
       }
-      return marketplace.orders.create(payload, key);
+      return marketplace.orders.create(attempt.payload, attempt.key);
     },
     onSuccess: async (receipt) => {
       sessionStorage.setItem('kurio_last_order_id', receipt.orderId);
@@ -79,7 +91,10 @@ export function PaymentPage() {
     return <RedirectMessage title="Entre para continuar" action="/login" returnTo="/payment" />;
   if (cartQuery.isPending || walletsQuery.isPending || profileQuery.isPending)
     return <LoadingState />;
-  if (!cart.length) return <RedirectMessage title="Seu carrinho está vazio" action="/cart" />;
+  const checkoutCart = cart.length ? cart : (pendingOrderAttempt.current?.cart ?? []);
+  const checkoutQuote = quoteQuery.data ?? pendingOrderAttempt.current?.quote;
+  if (!checkoutCart.length)
+    return <RedirectMessage title="Seu carrinho está vazio" action="/cart" />;
   const user = profileQuery.data ?? sessionQuery.data?.user;
   if (cartQuery.isError || walletsQuery.isError || profileQuery.isError)
     return <ErrorState error={cartQuery.error ?? walletsQuery.error ?? profileQuery.error} />;
@@ -177,7 +192,7 @@ export function PaymentPage() {
         <aside className="payment-summary">
           <h2>Seus NFTs</h2>
           <div className="payment-item-list">
-            {cart.map((item) => (
+            {checkoutCart.map((item) => (
               <div className="payment-item" key={item.nft.id}>
                 <img src={item.nft.image} alt="" />
                 <span>
@@ -193,7 +208,7 @@ export function PaymentPage() {
           <p className="coupon-hint">
             Tem um código promocional? <Link to="/cart">Aplique aqui</Link>
           </p>
-          <PriceSummary quote={quoteQuery.data} />
+          <PriceSummary quote={checkoutQuote} />
           <h2>Carteira e rede</h2>
           {walletsQuery.data?.map((wallet) => (
             <label key={wallet.id} className="wallet-option">
