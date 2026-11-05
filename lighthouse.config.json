@@ -1,0 +1,24 @@
+{
+  "host": "127.0.0.1",
+  "port": 4173,
+  "runs": 3,
+  "pages": [
+    {
+      "name": "home",
+      "path": "/"
+    },
+    {
+      "name": "nft-detail",
+      "path": "/nft/emerald-ape-042"
+    }
+  ],
+  "profiles": ["mobile", "desktop"],
+  "categories": {
+    "performance": 90,
+    "accessibility": 95,
+    "best-practices": 95,
+    "seo": 90
+  },
+  "metrics": ["largest-contentful-paint", "cumulative-layout-shift", "total-blocking-time"],
+  "outputDirectory": "lighthouse-reports"
+}

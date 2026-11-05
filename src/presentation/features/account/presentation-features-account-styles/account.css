@@ -1,0 +1,102 @@
+.profile-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 55px;
+  padding: 45px 0 100px;
+  align-items: start;
+  min-height: 650px;
+}
+.profile-sidebar {
+  background: var(--surface);
+  padding: 20px 0;
+}
+.profile-sidebar h2 {
+  padding: 0 20px;
+  font-size: 23px;
+}
+.profile-sidebar a,
+.profile-sidebar button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  cursor: pointer;
+  text-align: left;
+}
+.profile-sidebar a.active {
+  border-left: 5px solid var(--accent);
+}
+.profile-sidebar svg {
+  width: 20px;
+}
+.profile-content h1,
+.profile-content h2 {
+  font-size: 22px;
+}
+.profile-form label {
+  display: block;
+  margin: 15px 0;
+}
+.password-fields {
+  max-width: 580px;
+}
+.button-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.wallets-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+.wallets-title h1 {
+  margin-bottom: 8px;
+}
+.wallets-title p {
+  color: var(--muted);
+}
+.text-button {
+  color: var(--accent-bright);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.wallet-card-list {
+  display: grid;
+  gap: 14px;
+  margin: 22px 0 42px;
+}
+.wallet-card-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.wallet-card-row .wallet-option {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.wallet-card-row > .text-button {
+  flex: none;
+  padding: 10px 0 10px 10px;
+}
+.wallet-form {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+.wallet-form > button {
+  margin-top: 12px;
+}
+.loading-grid {
+  min-height: 60vh;
+  padding: 60px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}

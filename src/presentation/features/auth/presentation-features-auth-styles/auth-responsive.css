@@ -1,0 +1,54 @@
+@media (max-width: 700px) {
+  .auth-page {
+    min-height: calc(100vh - 56px);
+    padding: 24px;
+    display: block;
+  }
+  .auth-decoration {
+    display: none;
+  }
+  .auth-panel {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 50;
+    width: 100vw !important;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow-y: auto;
+    transform: none !important;
+    background: var(--page);
+    border: 0;
+    padding: 35px 24px;
+  }
+  .auth-tabs {
+    margin: 55px 0 48px;
+  }
+  .auth-description {
+    text-align: left;
+  }
+  .form-stack {
+    gap: 18px;
+  }
+  .form-stack input {
+    padding: 18px;
+    border-radius: 22px;
+  }
+  .form-stack .button {
+    min-height: 62px;
+    border-radius: 20px;
+    font-size: 18px;
+    margin-top: 26px;
+  }
+  .social-auth {
+    margin-top: 55px;
+    gap: 14px;
+  }
+  .social-auth .button {
+    min-height: 58px;
+    border-radius: 8px;
+  }
+  .auth-switch {
+    font-size: 14px;
+    margin-top: 24px !important;
+  }
+}

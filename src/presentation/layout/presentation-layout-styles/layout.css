@@ -1,0 +1,246 @@
+#root {
+  min-height: 100vh;
+}
+.app-shell {
+  min-height: 100vh;
+}
+.page-width {
+  width: min(1440px, calc(100% - 64px));
+  margin-inline: auto;
+}
+.site-header {
+  height: 74px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+.wordmark {
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  font-size: 15px;
+}
+.main-nav {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  gap: clamp(24px, 4vw, 72px);
+}
+.main-nav a {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+}
+.main-nav a:hover,
+.main-nav a.active {
+  color: var(--accent-bright);
+  border-color: var(--accent);
+}
+.header-actions,
+.account-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.icon-button {
+  border: 0;
+  background: transparent;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  color: var(--cream);
+}
+.icon-button svg {
+  width: 20px;
+  height: 20px;
+}
+.cart-shortcut .count-badge {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #1b0e08;
+  font-size: 10px;
+}
+.button {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #180e08;
+  border-radius: 4px;
+  padding: 11px 20px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    transform 0.16s ease;
+}
+.button:hover:not(:disabled) {
+  background: var(--accent-bright);
+  transform: translateY(-1px);
+}
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.button svg {
+  width: 17px;
+  height: 17px;
+}
+.button-small {
+  padding: 8px 13px;
+  font-size: 13px;
+}
+.button-outline {
+  background: transparent;
+  color: var(--accent-bright);
+}
+.button-outline:hover:not(:disabled) {
+  color: #160d08;
+}
+.button-wide {
+  width: 100%;
+  min-height: 50px;
+}
+.profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.profile-link svg {
+  width: 16px;
+}
+.mobile-menu,
+.mobile-search,
+.mobile-filter-button,
+.filter-close {
+  display: none;
+}
+
+.site-footer {
+  background: var(--surface);
+}
+.benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 1.2fr;
+  padding: 28px;
+  gap: 22px;
+}
+.benefit-grid article {
+  border-right: 1px solid var(--accent);
+  padding-right: 18px;
+}
+.benefit-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #160d08;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+.benefit-grid h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.benefit-grid p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.newsletter-input {
+  display: flex;
+}
+.newsletter-input input {
+  min-width: 0;
+  width: 100%;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  padding: 10px;
+  color: var(--cream);
+}
+.newsletter-input button {
+  border-radius: 0 4px 4px 0;
+}
+.newsletter > p {
+  margin-top: 12px;
+}
+.footer-band {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  background: #3a2413;
+  padding: 20px 28px;
+  font-size: 13px;
+}
+.footer-links {
+  padding: 26px 28px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+.footer-links h3 {
+  font-size: 16px;
+}
+.footer-links a {
+  display: block;
+  font-size: 12px;
+  margin: 9px 0;
+  color: var(--muted);
+}
+.footer-links small {
+  color: var(--accent);
+  font-size: 9px;
+}
+.social-links {
+  color: var(--accent);
+}
+.copyright {
+  text-align: center;
+  font-size: 11px;
+  padding: 0 12px 18px;
+  margin: 0;
+}
+.scenario-control {
+  position: fixed;
+  z-index: 20;
+  bottom: 8px;
+  right: 8px;
+  padding: 6px;
+  border-radius: 4px;
+  background: var(--surface-strong);
+  font-size: 10px;
+  opacity: 0.4;
+}
+.scenario-control:hover,
+.scenario-control:focus-within {
+  opacity: 1;
+}
+.scenario-control select {
+  background: var(--surface);
+  color: var(--cream);
+  border: 1px solid var(--border);
+  margin-left: 6px;
+}
+.mobile-bottom-nav {
+  display: none;
+}

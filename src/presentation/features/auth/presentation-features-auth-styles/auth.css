@@ -1,0 +1,148 @@
+.auth-close {
+  position: absolute;
+  z-index: 1;
+  top: 14px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+.auth-close svg {
+  width: 20px;
+}
+.auth-description {
+  text-align: center;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 20px 0;
+}
+.dialog-content[data-state='open'] {
+  animation: dialog-in 0.16s ease-out;
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.auth-page {
+  min-height: 680px;
+  padding: 65px 8%;
+  display: grid;
+  grid-template-columns: 1fr minmax(420px, 0.85fr);
+  gap: 40px;
+  align-items: center;
+}
+.auth-decoration {
+  min-height: 420px;
+  position: relative;
+  overflow: hidden;
+}
+.auth-decoration h1 {
+  font-size: clamp(28px, 4vw, 54px);
+  line-height: 1.4;
+}
+.auth-decoration p {
+  color: var(--muted);
+}
+.auth-decoration img {
+  max-width: 70%;
+  max-height: 310px;
+  object-fit: contain;
+  margin-left: auto;
+}
+.auth-panel {
+  padding: 32px;
+  background: var(--surface);
+  border-bottom: 8px solid var(--accent);
+}
+.auth-panel > p {
+  text-align: center;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 20px 0;
+}
+.auth-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.auth-tabs span + span {
+  border-left: 1px solid var(--border);
+  padding-left: 12px;
+}
+.auth-tabs .active {
+  color: var(--accent-bright);
+}
+.form-stack {
+  display: grid;
+  gap: 14px;
+}
+.form-stack label,
+.payment-form-grid label,
+.profile-content label,
+.coupon-label {
+  color: var(--cream);
+}
+.form-stack input,
+.payment-form-grid input,
+.payment-form-grid select,
+.profile-content input,
+.profile-content select,
+.profile-content textarea,
+.payment-page textarea {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 7px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--cream);
+}
+.forgot-link {
+  text-align: right;
+  color: var(--accent-bright);
+  font-size: 13px;
+}
+.social-auth {
+  margin-top: 22px;
+  display: grid;
+  gap: 10px;
+}
+.social-auth > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+.social-auth > div span {
+  height: 1px;
+  background: var(--border);
+  flex: 1;
+}
+.social-auth small {
+  color: var(--muted);
+  text-align: center;
+  font-size: 10px;
+}
+.auth-switch {
+  text-align: center;
+  margin: 18px 0 0 !important;
+  color: var(--muted);
+}
+.auth-switch a {
+  color: var(--accent-bright);
+}
+.test-credentials {
+  font-size: 10px;
+  margin-bottom: 0 !important;
+}

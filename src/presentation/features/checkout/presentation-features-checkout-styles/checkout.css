@@ -1,0 +1,98 @@
+.payment-page {
+  padding-bottom: 50px;
+}
+.payment-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(370px, 0.9fr);
+  gap: 45px;
+}
+.payment-layout h1 {
+  font-size: 22px;
+}
+.payment-form-grid,
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+.payment-form-grid label,
+.profile-form-grid label {
+  display: block;
+}
+.payment-page textarea {
+  resize: vertical;
+}
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0;
+}
+.checkbox-line input {
+  accent-color: var(--accent);
+}
+.payment-summary > h2 {
+  font-size: 20px;
+}
+.payment-item-list {
+  display: grid;
+  gap: 12px;
+}
+.payment-item {
+  background: var(--surface);
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.payment-item img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.payment-item > span {
+  flex: 1;
+  min-width: 0;
+}
+.payment-item strong,
+.payment-item small {
+  display: block;
+}
+.payment-item small {
+  color: var(--muted);
+  margin-top: 4px;
+}
+.coupon-hint {
+  color: var(--muted);
+  text-align: center;
+  margin: 16px 0;
+}
+.coupon-hint a {
+  color: var(--accent-bright);
+}
+.wallet-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin: 12px 0;
+  cursor: pointer;
+}
+.wallet-option input {
+  accent-color: var(--accent);
+}
+.wallet-option > span:nth-child(2) {
+  flex: 1;
+}
+.wallet-option strong,
+.wallet-option small {
+  display: block;
+}
+.wallet-option small {
+  color: var(--muted);
+  margin-top: 5px;
+}

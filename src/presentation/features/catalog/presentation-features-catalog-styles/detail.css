@@ -1,0 +1,154 @@
+.breadcrumb {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 25px 0;
+}
+.breadcrumb a:hover {
+  color: var(--accent-bright);
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: 90px minmax(300px, 0.95fr) minmax(420px, 1.2fr);
+  gap: 24px;
+  align-items: start;
+}
+.gallery-thumbs {
+  display: grid;
+  gap: 14px;
+}
+.gallery-thumbs button {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+  background: var(--surface);
+  cursor: pointer;
+}
+.gallery-thumbs button.active {
+  border-color: var(--accent);
+}
+.gallery-thumbs img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.detail-main-image {
+  background: var(--surface);
+  padding: 12px;
+  border-radius: 10px;
+}
+.detail-main-image img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 18px;
+  object-fit: cover;
+}
+.detail-info h1 {
+  font-size: 30px;
+  margin: 0 0 16px;
+}
+.detail-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+  gap: 12px;
+}
+.detail-price-row .eth-price {
+  font-size: 21px;
+}
+.rating {
+  color: var(--accent);
+  white-space: nowrap;
+  font-size: 13px;
+}
+.rating span {
+  color: var(--cream);
+}
+.detail-info h3 {
+  font-size: 15px;
+  margin: 16px 0 8px;
+}
+.detail-info > p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 14px;
+}
+.edition-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.edition-pills span {
+  padding: 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.edition-pills span.selected {
+  color: var(--accent-bright);
+  border-color: var(--accent);
+}
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 18px 0;
+}
+.quantity-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+.quantity-control button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--accent);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.quantity-control button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.quantity-control svg {
+  width: 15px;
+}
+.nft-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.nft-meta dd {
+  margin: 0;
+}
+.detail-description {
+  margin-top: 75px;
+  min-height: 400px;
+}
+.detail-description > p {
+  line-height: 1.8;
+  color: var(--muted);
+}
+.related-section {
+  padding: 40px 0 85px;
+}
+.related-section h2 {
+  border-bottom: 1px solid var(--border);
+  color: var(--accent-bright);
+  padding-bottom: 12px;
+}
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}

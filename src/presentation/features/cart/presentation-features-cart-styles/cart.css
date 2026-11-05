@@ -1,0 +1,119 @@
+.cart-page {
+  padding-bottom: 20px;
+}
+.cart-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(310px, 0.9fr);
+  gap: 55px;
+  align-items: start;
+}
+.cart-table-head,
+.cart-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.5fr) 0.65fr 0.8fr 0.7fr 30px;
+  gap: 14px;
+  align-items: center;
+}
+.cart-table-head {
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+}
+.cart-row {
+  background: var(--surface);
+  margin-top: 14px;
+  padding: 12px;
+  min-height: 104px;
+}
+.cart-product {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.cart-product img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 7px;
+}
+.cart-product span {
+  min-width: 0;
+}
+.cart-product strong,
+.cart-product small {
+  display: block;
+}
+.cart-product small {
+  color: var(--muted);
+  margin-top: 4px;
+}
+.remove-button {
+  color: var(--muted);
+}
+.cart-summary {
+  padding-top: 0;
+}
+.cart-summary h2 {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  font-size: 20px;
+}
+.coupon-label {
+  display: block;
+  font-weight: 700;
+  margin: 20px 0;
+}
+.coupon-input {
+  display: flex;
+  margin-top: 8px;
+}
+.coupon-input input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--cream);
+}
+.price-summary {
+  margin: 18px 0;
+}
+.price-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 15px 0;
+}
+.price-summary > small {
+  color: var(--accent-bright);
+  display: block;
+  text-align: right;
+  margin-top: -7px;
+}
+.price-summary .total-line {
+  border-top: 1px solid var(--border);
+  padding-top: 15px;
+  font-size: 18px;
+}
+.checkout-button {
+  width: 100%;
+  min-height: 52px;
+}
+.continue-link {
+  color: var(--accent-bright);
+  display: block;
+  text-align: center;
+  margin: 18px;
+}
+.form-error {
+  color: var(--danger);
+  font-size: 13px;
+}
+.form-success {
+  color: var(--success);
+  font-size: 13px;
+}
+.cart-page .related-section {
+  margin-top: 55px;
+}

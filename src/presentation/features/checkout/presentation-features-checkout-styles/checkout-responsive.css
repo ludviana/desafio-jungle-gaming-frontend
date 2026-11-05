@@ -1,0 +1,41 @@
+@media (max-width: 700px) {
+  .payment-summary .price-summary {
+    margin-top: 22px;
+  }
+  .payment-page {
+    padding: 16px;
+  }
+  .payment-page > .breadcrumb {
+    display: none;
+  }
+  .payment-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .payment-layout > section {
+    display: none;
+  }
+  .payment-summary {
+    padding-bottom: 24px;
+  }
+  .payment-summary > .button {
+    border-radius: 40px;
+    min-height: 60px;
+    position: sticky;
+    bottom: 12px;
+  }
+  .wallet-option {
+    border-radius: 22px;
+    padding: 18px;
+  }
+  .payment-item {
+    border-radius: 15px;
+  }
+  .payment-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .wallet-option > span:last-child {
+    font-size: 10px;
+  }
+}

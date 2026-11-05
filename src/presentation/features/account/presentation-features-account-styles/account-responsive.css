@@ -1,0 +1,48 @@
+@media (max-width: 700px) {
+  .profile-layout {
+    display: block;
+    padding: 0 16px 60px;
+  }
+  .profile-sidebar {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .profile-sidebar h2 {
+    display: none;
+  }
+  .profile-sidebar a {
+    width: auto;
+    white-space: nowrap;
+    padding: 10px;
+  }
+  .profile-sidebar button {
+    width: auto;
+    white-space: nowrap;
+    padding: 10px;
+  }
+  .profile-sidebar svg {
+    flex: none;
+  }
+  .profile-sidebar a.active {
+    border-left: 0;
+    border-bottom: 3px solid var(--accent);
+  }
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .button-row {
+    flex-direction: column;
+  }
+  .wallets-title {
+    align-items: center;
+  }
+  .wallets-title h1 {
+    font-size: 19px;
+  }
+  .wallet-card-list .wallet-option {
+    align-items: flex-start;
+  }
+}
