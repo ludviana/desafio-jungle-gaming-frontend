@@ -81,7 +81,8 @@ after navigation or reload.
 
 The client uses the Socket.IO WebSocket transport at `/socket.io/`. Browser MSW
 matches that exact WebSocket endpoint and adapts Engine.IO/Socket.IO frames with
-`@mswjs/socket.io-binding`.
+`@mswjs/socket.io-binding`. The route tree is imported after MSW starts so
+`socket.io-client` captures the intercepted WebSocket implementation.
 
 Client subscriptions:
 

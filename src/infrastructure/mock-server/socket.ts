@@ -9,7 +9,7 @@ import type {
 import { db } from './db';
 
 const socketProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-export const socketEndpoint = `${socketProtocol}//${location.host}/socket.io/`;
+export const socketEndpoint = `${socketProtocol}//${location.host}`;
 const socket = ws.link(socketEndpoint);
 const PENDING_CONFIRMATION_DELAY_MS = 1200;
 

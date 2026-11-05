@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import '@fontsource-variable/roboto-mono';
 import { marketplace } from './app/container';
-import { routeTree } from './app/router/routes';
 import { MarketplaceProvider } from './presentation/shared/MarketplaceProvider';
 import './presentation/presentation-global-styles/globals.css';
 
@@ -15,15 +14,18 @@ const queryClient = new QueryClient({
   },
 });
 
-const router = createRouter({
-  routeTree,
-  defaultPreload: 'intent',
-  scrollRestoration: true,
-});
+async function createAppRouter() {
+  const { routeTree } = await import('./app/router/routes');
+  return createRouter({
+    routeTree,
+    defaultPreload: 'intent',
+    scrollRestoration: true,
+  });
+}
 
 declare module '@tanstack/react-router' {
   interface Register {
-    router: typeof router;
+    router: Awaited<ReturnType<typeof createAppRouter>>;
   }
 }
 
@@ -36,7 +38,8 @@ async function prepareApp() {
 }
 
 prepareApp()
-  .then(() => {
+  .then(async () => {
+    const router = await createAppRouter();
     ReactDOM.createRoot(document.getElementById('root')!).render(
       <React.StrictMode>
         <QueryClientProvider client={queryClient}>

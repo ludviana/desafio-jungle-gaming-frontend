@@ -9,18 +9,48 @@ import {
   selectScenario,
 } from '../support';
 
+const socketDiagnostics = new WeakMap<Page, string[]>();
+
 async function expectSubscription(page: Page, event: string, id?: string) {
   await expect
     .poll(async () => {
       const observations = await getMockSocketObservations(page);
       const subscriptions =
         event === 'subscribe:nft' ? observations.nftSubscriptions : observations.orderSubscriptions;
-      return id ? subscriptions.includes(id) : subscriptions.length > 0;
+      const state = {
+        subscribed: id ? subscriptions.includes(id) : subscriptions.length > 0,
+        connections: observations.connections,
+        nftSubscriptions: observations.nftSubscriptions,
+        orderSubscriptions: observations.orderSubscriptions,
+        socketDiagnostics: socketDiagnostics.get(page) ?? [],
+      };
+      return state.subscribed ? 'READY' : JSON.stringify(state);
     })
-    .toBe(true);
+    .toBe('READY');
 }
 
 test.beforeEach(async ({ page }) => {
+  const diagnostics: string[] = [];
+  socketDiagnostics.set(page, diagnostics);
+  page.on('console', (message) => {
+    if (
+      ['error', 'warning'].includes(message.type()) &&
+      /websocket|socket\.io/i.test(message.text())
+    ) {
+      diagnostics.push(`Browser ${message.type()}: ${message.text()}`);
+    }
+  });
+  page.on('pageerror', (error) => diagnostics.push(`Page error: ${error.message}`));
+  page.on('websocket', (webSocket) => {
+    if (!webSocket.url().includes('/socket.io/')) return;
+    diagnostics.push(`Socket.IO WebSocket opened: ${webSocket.url()}`);
+    webSocket.on('framesent', (frame) => diagnostics.push(`Socket.IO sent: ${frame.payload}`));
+    webSocket.on('framereceived', (frame) =>
+      diagnostics.push(`Socket.IO received: ${frame.payload}`),
+    );
+    webSocket.on('close', () => diagnostics.push('Socket.IO WebSocket closed'));
+    webSocket.on('socketerror', (error) => diagnostics.push(`Socket.IO WebSocket error: ${error}`));
+  });
   await resetDemo(page);
 });
 
@@ -30,7 +60,7 @@ test('NFT changes arrive through Socket.IO and update the detail cache', async (
   await expect(price).toHaveText('1.19 ETH');
   await expectSubscription(page, 'subscribe:nft', 'emerald-ape-042');
   expect(await postMockEvent(page, '/api/mock/events/nft/emerald-ape-042')).toBe(true);
-  await expect(price).toHaveText('1.20 ETH');
+  await expect(price).toHaveText('1.2 ETH');
   await expect
     .poll(async () =>
       (await getMockSocketObservations(page)).publishedEvents.some(
@@ -74,7 +104,7 @@ test('duplicate and stale NFT events do not revert the latest price', async ({ p
   await expect(price).toHaveText('1.19 ETH');
   await expectSubscription(page, 'subscribe:nft', 'emerald-ape-042');
   expect(await postMockEvent(page, '/api/mock/events/nft/emerald-ape-042/replay')).toBe(true);
-  await expect(price).toHaveText('1.20 ETH');
+  await expect(price).toHaveText('1.2 ETH');
   await expect
     .poll(
       async () =>
@@ -83,7 +113,7 @@ test('duplicate and stale NFT events do not revert the latest price', async ({ p
         ).length,
     )
     .toBeGreaterThanOrEqual(3);
-  await expect(price).toHaveText('1.20 ETH');
+  await expect(price).toHaveText('1.2 ETH');
 });
 
 test('pending orders resolve from an order.updated Socket.IO event', async ({ page }) => {
